@@ -87,7 +87,7 @@ private:
         }
     }
 
-    node *insert(binary_search_tree t, node *z) // inserts node z into tree t
+    void *insert(binary_search_tree t, node *z) // inserts node z into tree t
     {
         node *x = t.root;
         node *y = nullptr;
@@ -116,5 +116,51 @@ private:
             y->r = z;
         }
         // cont determine z relation to y
+    }
+
+    void *replaceSubtree(binary_search_tree t, node *u, node *v) // replaces subtree rooted at u with subtree rooted at v, will be used for delete. //doesn't update v->l or v->r the caller should.
+    {
+        if (u->p == nullptr)
+        {
+            t.root = v;
+        }
+        else if (u == u->p->l)
+        {
+            u->p->l = v;
+        }
+        else
+        {
+            u->p->r = v;
+        }
+
+        if (v != nullptr)
+        {
+            v->p = u->p;
+        }
+    }
+
+    void deleteNode(binary_search_tree t, node *z)
+    {
+        if (z->l == nullptr)
+        {
+            replaceSubtree(t, z, z->r);
+        }
+        else if (z->r == nullptr)
+        {
+            replaceSubtree(t, z, z->l);
+        }
+        else
+        {
+            node *y = min(z->r);
+            if (y != z->r)
+            {
+                replaceSubtree(t, y, y->r);
+                y->r = z->r;
+                y->r->p = y;
+            }
+            replaceSubtree(t, z, y);
+            y->l = z->l;
+            y->l->p = y;
+        }
     }
 };
